@@ -7,14 +7,14 @@ import { collection, orderBy, query } from 'firebase/firestore'
 import db from '../firebase'
 import ChatRow from './ChatRow'
 import { timeStamp } from 'console'
+import ModalSelection from './ModalSelection'
 
 function SideBar() {
   const {data: session} =useSession();
 
   const [chats, loading, error] = useCollection(
-    session && query(collection(db, "users", session.user?.email!, "chats"),
-    orderBy('timeStamp','asc')
-    )
+    session && collection(db, "users", session.user?.email!, "chats")
+    
     );
   
     console.log(chats)
@@ -25,15 +25,24 @@ function SideBar() {
             <div>
                 {/* newchat */}
                 <NewChat />
-                <div>
+                <div className='hidden sm:inline'>
+                  <ModalSelection />
                     {/* model selection */}
                      </div>
-                    
-                        {/* map through chats */}
+                     <div className='flex flex-col space-y-2 my-2'>
+                      {loading && (
+                        <div className='animate-pulse text-center text-white'>
+                          <p>Loading Chats ...</p>
+                        </div>
+                      )}
+{/* map through chats */}
                         {chats?.docs.map(chat => (
                           <ChatRow key={chat.id} id={chat.id}/>
                         ))}
                    
+                     </div>
+                    
+                        
                 
             </div>
             </div>
